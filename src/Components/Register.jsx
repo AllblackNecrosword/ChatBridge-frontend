@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import image from "../assets/Logo.png";
-import {Link} from "react-router-dom"
+import { Link } from "react-router-dom";
 const Register = () => {
   const [input, setInput] = useState({
     username: "",
@@ -12,11 +12,30 @@ const Register = () => {
     const { name, value } = e.target;
     setInput({ ...input, [name]: value });
   };
-  // console.log(input);
+  console.log(input);
 
-  const submithandler = () => {
-    alert("Submited");
+  const submithandler = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await fetch("http://localhost:5000/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(input),
+        credentials: "include",
+      });
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.log("Error response:", errorData);
+      } else {
+        alert("Successfull");
+      }
+    } catch (error) {
+      console.log("Fetch error:", error);
+    }
   };
+
   return (
     <div className="flex justify-center items-center h-screen ">
       <form
@@ -59,8 +78,11 @@ const Register = () => {
             Submit
           </button>
         </div>
-        <span >
-          Already have an account ? <Link to={"/login"} className="text-blue-800">Login</Link>
+        <span>
+          Already have an account ?{" "}
+          <Link to={"/login"} className="text-blue-800">
+            Login
+          </Link>
         </span>
       </form>
     </div>
