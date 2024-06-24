@@ -1,12 +1,21 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import image from "../assets/Logo.png";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+
 const Register = () => {
   const [input, setInput] = useState({
     username: "",
     email: "",
     password: "",
   });
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (localStorage.getItem("user")) {
+      navigate("/");
+    }
+  }, []);
 
   const inputHandler = (e) => {
     const { name, value } = e.target;
@@ -14,30 +23,65 @@ const Register = () => {
   };
   console.log(input);
 
+  const checkValidation = () => {
+    const { username, email, password } = input;
+    if (!username || !email || !password) {
+      toast.error("Fill up the form", {
+        position: "top-right",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+      return false;
+    }
+    return true;
+  };
+
   const submithandler = async (e) => {
     e.preventDefault();
-    try {
-      const response = await fetch("http://localhost:5000/register", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(input),
-        credentials: "include",
-      });
-      if (!response.ok) {
-        const errorData = await response.json();
-        console.log("Error response:", errorData);
-      } else {
-        alert("Successfull");
+    if (checkValidation()) {
+      try {
+        const response = await fetch("http://localhost:5000/register", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(input),
+          credentials: "include",
+        });
+        if (!response.ok) {
+          const errorData = await response.json();
+          console.log("Error response:", errorData);
+        }
+        if (response.ok) {
+          toast.info("Registration Successful", {
+            position: "top-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "light",
+          });
+          setInput({
+            username: "",
+            email: "",
+            password: "",
+          });
+        }
+      } catch (error) {
+        console.log("Fetch error:", error);
       }
-    } catch (error) {
-      console.log("Fetch error:", error);
     }
   };
 
   return (
-    <div className="flex justify-center items-center h-screen ">
+    <div className="flex justify-center items-center h-screen">
       <form
         className="w-full max-w-sm p-8 bg-white border border-gray-300 rounded-lg shadow-md"
         onSubmit={submithandler}
@@ -79,7 +123,7 @@ const Register = () => {
           </button>
         </div>
         <span>
-          Already have an account ?{" "}
+          Already have an account?{" "}
           <Link to={"/login"} className="text-blue-800">
             Login
           </Link>
