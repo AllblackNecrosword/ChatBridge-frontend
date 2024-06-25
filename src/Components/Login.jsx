@@ -10,11 +10,11 @@ const Login = () => {
 
   const navigate = useNavigate();
 
-  useEffect(()=>{
-if(localStorage.getItem("user")){
-  navigate("/");
-}
-  },[])
+  useEffect(() => {
+    if (localStorage.getItem("user")) {
+      navigate("/");
+    }
+  }, []);
 
   const inputHandler = (e) => {
     const { name, value } = e.target;
@@ -35,7 +35,7 @@ if(localStorage.getItem("user")){
         theme: "light",
       });
       return false;
-    }else if(password.length < 8){
+    } else if (password.length < 8) {
       toast.error("Password should be equal or greater than 8 character", {
         position: "top-right",
         autoClose: 5000,
@@ -66,16 +66,19 @@ if(localStorage.getItem("user")){
         const result = await response.json();
         if (!response.ok) {
           console.log("Error response:", result);
-          toast.error({result}, {
-            position: "top-right",
-            autoClose: 5000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            theme: "light",
-          });
+          toast.error(
+            { result },
+            {
+              position: "top-right",
+              autoClose: 5000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+              progress: undefined,
+              theme: "light",
+            }
+          );
         }
         if (response.ok) {
           toast.info("Login Successful", {
@@ -92,9 +95,9 @@ if(localStorage.getItem("user")){
             email: "",
             password: "",
           });
-          navigate("/");
-          console.log("response",result);
-          localStorage.setItem("user",result.user.username)
+          navigate("/avatar");
+          console.log("response", result);
+          localStorage.setItem("user", JSON.stringify(result.user));
         }
       }
     } catch (error) {
@@ -103,7 +106,7 @@ if(localStorage.getItem("user")){
   };
 
   return (
-    <div className="flex justify-center items-center h-screen ">
+    <div className="flex justify-center items-center h-screen bg-indigo-950">
       <form
         className="w-full max-w-sm p-8 bg-white border border-gray-300 rounded-lg shadow-md"
         onSubmit={submithandler}

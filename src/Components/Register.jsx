@@ -8,6 +8,7 @@ const Register = () => {
     username: "",
     email: "",
     password: "",
+    avatarImage: "https://img.freepik.com/premium-photo/graphic-designer-digital-avatar-generative-ai_934475-9292.jpg",
   });
   const navigate = useNavigate();
 
@@ -15,7 +16,7 @@ const Register = () => {
     if (localStorage.getItem("user")) {
       navigate("/");
     }
-  }, []);
+  }, [navigate]);
 
   const inputHandler = (e) => {
     const { name, value } = e.target;
@@ -53,10 +54,11 @@ const Register = () => {
           body: JSON.stringify(input),
           credentials: "include",
         });
+        const result = await response.json();
         if (!response.ok) {
-          const errorData = await response.json();
-          console.log("Error response:", errorData);
+          console.log("Error response:", result);
         }
+
         if (response.ok) {
           toast.info("Registration Successful", {
             position: "top-right",
@@ -72,7 +74,11 @@ const Register = () => {
             username: "",
             email: "",
             password: "",
+            avatarImage: "https://img.freepik.com/premium-photo/graphic-designer-digital-avatar-generative-ai_934475-9292.jpg",
           });
+          console.log("result", result);
+          localStorage.setItem("user", result.createuser);
+          navigate("/avatar");
         }
       } catch (error) {
         console.log("Fetch error:", error);
@@ -81,7 +87,7 @@ const Register = () => {
   };
 
   return (
-    <div className="flex justify-center items-center h-screen">
+    <div className="flex justify-center items-center h-screen bg-indigo-950">
       <form
         className="w-full max-w-sm p-8 bg-white border border-gray-300 rounded-lg shadow-md"
         onSubmit={submithandler}
