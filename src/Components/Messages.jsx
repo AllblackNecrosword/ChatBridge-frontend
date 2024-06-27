@@ -1,38 +1,39 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
-const Messages = () => {
+const Messages = ({ contactId }) => {
+  const [messages, setMessages] = useState([]);
+
+  useEffect(() => {
+    const fetchMessages = async () => {
+      if (!contactId) return;
+
+      try {
+        const response = await fetch(`http://localhost:5000/getmessages/${contactId}`);
+        if (!response.ok) {
+          console.log(response.error);
+        }
+        const result = await response.json();
+        setMessages(result);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    fetchMessages();
+  }, [contactId]);
 
   return (
     <div className="flex flex-col h-full">
       <div className="flex-grow p-4 overflow-auto bg-white rounded-lg shadow-inner">
         <div className="flex flex-col space-y-4">
-
-            <h1>Welcome to the Chat Bridge</h1>
-          {/* <div className="self-start bg-blue-300 p-3 rounded-lg shadow">
-            <p>Hello, how are you?</p>
-          </div>
-          <div className="self-end bg-green-300 p-3 rounded-lg shadow">
-            <p>I'm good, thank you!</p>
-          </div>
-          <div className="self-start bg-blue-300 p-3 rounded-lg shadow">
-            <p>Hello, how are you?</p>
-          </div>
-          <div className="self-end bg-green-300 p-3 rounded-lg shadow">
-            <p>I'm good, thank you!</p>
-          </div>
-          <div className="self-start bg-blue-300 p-3 rounded-lg shadow">
-            <p>Hello, how are you?</p>
-          </div>
-          <div className="self-end bg-green-300 p-3 rounded-lg shadow">
-            <p>I'm good, thank you!</p>
-          </div>
-          <div className="self-start bg-blue-300 p-3 rounded-lg shadow">
-            <p>Hello, how are you?</p>
-          </div>
-          <div className="self-end bg-green-300 p-3 rounded-lg shadow">
-            <p>I'm good, thank you!</p>
-          </div> */}
-          {/* Add more messages here */}
+          {messages.map((message, index) => (
+            <div
+              key={index}
+              className={`self-${message.sender === 'me' ? 'end' : 'start'} bg-${message.sender === 'me' ? 'green' : 'blue'}-300 p-3 rounded-lg shadow`}
+            >
+              <p>{message.text}</p>
+            </div>
+          ))}
         </div>
       </div>
       <div className="mt-4 flex">
